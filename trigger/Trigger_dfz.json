@@ -2,12 +2,13 @@
 	"name": "Trigger_dfz",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Started",
+		"runtimeState": "Stopped",
 		"type": "TumblingWindowTrigger",
 		"typeProperties": {
 			"frequency": "Minute",
 			"interval": 15,
 			"startTime": "2023-05-17T10:41:00Z",
+			"endTime": "2023-05-17T13:00:12Z",
 			"delay": "00:00:00",
 			"maxConcurrency": 50,
 			"retryPolicy": {
