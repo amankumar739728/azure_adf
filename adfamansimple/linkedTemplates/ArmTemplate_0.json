@@ -72,27 +72,49 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DestinationDataset_py4')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/Trigger_dfz')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
 				"annotations": [],
-				"type": "Binary",
+				"runtimeState": "Stopped",
+				"type": "TumblingWindowTrigger",
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "BlobDestination",
-						"container": "adfcontainer"
-					}
+					"frequency": "Minute",
+					"interval": 15,
+					"startTime": "2023-05-17T10:41:00Z",
+					"endTime": "2023-05-17T13:00:12Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 50,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Trigger_py4')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Minute",
+					"interval": 15,
+					"startTime": "2023-05-17T07:45:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 50,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/MovieRatingWithYear')]",
@@ -174,30 +196,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/azure_adls_for_adf')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceDataset_py4')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "inputEmp_tq.txt",
-						"folderPath": "BlobSource",
-						"container": "adfcontainer"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
 			]
 		},
 		{
@@ -580,98 +578,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/azure_adls_for_adf')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DeltaCopyFromBlobPipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy_py4",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "adfcontainer/BlobSource/*"
-							},
-							{
-								"name": "Destination",
-								"value": "adfcontainer/BlobDestination/*"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "BinarySource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"modifiedDatetimeStart": {
-										"value": "@pipeline().parameters.windowStart",
-										"type": "Expression"
-									},
-									"modifiedDatetimeEnd": {
-										"value": "@pipeline().parameters.windowEnd",
-										"type": "Expression"
-									},
-									"deleteFilesAfterCompletion": false
-								},
-								"formatSettings": {
-									"type": "BinaryReadSettings"
-								}
-							},
-							"sink": {
-								"type": "BinarySink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"validateDataConsistency": false
-						},
-						"inputs": [
-							{
-								"referenceName": "SourceDataset_py4",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DestinationDataset_py4",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"parameters": {
-					"windowStart": {
-						"type": "String"
-					},
-					"windowEnd": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-05-17T09:17:07Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SourceDataset_py4')]",
-				"[concat(variables('factoryId'), '/datasets/DestinationDataset_py4')]"
 			]
 		},
 		{
@@ -1136,6 +1042,139 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/az_adls_InputEmp_tq')]",
 				"[concat(variables('factoryId'), '/datasets/az_SQLDB_dbo_emp')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dataflow Demo')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "az_ADLS_ProductsAll",
+								"type": "DatasetReference"
+							},
+							"name": "ProductsAll"
+						},
+						{
+							"dataset": {
+								"referenceName": "az_ADLS_ProductModel",
+								"type": "DatasetReference"
+							},
+							"name": "ProductModels"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "az_ADLS_ProductFinal",
+								"type": "DatasetReference"
+							},
+							"name": "ProductsFinal"
+						}
+					],
+					"transformations": [
+						{
+							"name": "CombineDatasets"
+						},
+						{
+							"name": "RemoveDuplicateColumns"
+						},
+						{
+							"name": "RemoveNoListPrice"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          ProductID as short,",
+						"          Name as string,",
+						"          ProductNumber as integer,",
+						"          MakeFlag as boolean,",
+						"          FinishedGoodsFlag as boolean,",
+						"          Color as string,",
+						"          SafetyStockLevel as short,",
+						"          ReorderPoint as short,",
+						"          StandardCost as double,",
+						"          ListPrice as double,",
+						"          Size as string,",
+						"          SizeUnitMeasureCode as string,",
+						"          WeightUnitMeasureCode as string,",
+						"          Weight as integer,",
+						"          DaysToManufacture as short,",
+						"          ProductLine as string,",
+						"          Class as string,",
+						"          Style as string,",
+						"          ProductSubcategoryID as string,",
+						"          ProductModelID as string,",
+						"          SellStartDate as timestamp,",
+						"          SellEndDate as timestamp,",
+						"          DiscontinuedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> ProductsAll",
+						"source(output(",
+						"          ProductModelID as string,",
+						"          Name as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> ProductModels",
+						"ProductsAll, ProductModels lookup(ProductsAll@ProductModelID == ProductModels@ProductModelID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> CombineDatasets",
+						"CombineDatasets select(mapColumn(",
+						"          ProductID,",
+						"          Name = ProductsAll@Name,",
+						"          {Model Name} = ProductModels@Name,",
+						"          ProductNumber,",
+						"          MakeFlag,",
+						"          FinishedGoodsFlag,",
+						"          Color,",
+						"          SafetyStockLevel,",
+						"          ReorderPoint,",
+						"          StandardCost,",
+						"          ListPrice,",
+						"          Size,",
+						"          SizeUnitMeasureCode,",
+						"          WeightUnitMeasureCode,",
+						"          Weight,",
+						"          DaysToManufacture,",
+						"          ProductLine,",
+						"          Class,",
+						"          Style,",
+						"          ProductSubcategoryID,",
+						"          ProductModelID = ProductsAll@ProductModelID,",
+						"          SellStartDate,",
+						"          SellEndDate,",
+						"          DiscontinuedDate",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> RemoveDuplicateColumns",
+						"RemoveDuplicateColumns filter(notEquals(ListPrice,0)) ~> RemoveNoListPrice",
+						"RemoveNoListPrice sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ID as string,",
+						"          Fname as string,",
+						"          Lname as string",
+						"     ),",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> ProductsFinal"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/az_ADLS_ProductsAll')]",
+				"[concat(variables('factoryId'), '/datasets/az_ADLS_ProductModel')]",
+				"[concat(variables('factoryId'), '/datasets/az_ADLS_ProductFinal')]"
 			]
 		}
 	]
