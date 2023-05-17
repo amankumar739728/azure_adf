@@ -1,0 +1,78 @@
+{
+	"name": "az_SQLDB_dbo_greentaxi",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "VendorID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PassengerCount",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TripDistance",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PickupTime",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DropTime",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PickupLocationId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DropLocationId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TotalAmount",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PaymentType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TripYear",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TripMonth",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TripDay",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TripTimeInMinutes",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "TripType",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "greentaxi"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

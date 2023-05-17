@@ -1,0 +1,38 @@
+{
+	"name": "az_ADLS_ProductFinal",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azure_adls_for_adf",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "product_final.csv",
+				"folderPath": "Destination",
+				"fileSystem": "adfcontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ID",
+				"type": "String"
+			},
+			{
+				"name": "Fname",
+				"type": "String"
+			},
+			{
+				"name": "Lname",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
