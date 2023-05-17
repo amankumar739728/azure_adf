@@ -10,7 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "inputEmp_tq.txt",
 				"folderPath": "BlobDestination",
 				"container": "adfcontainer"
 			}

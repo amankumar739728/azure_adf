@@ -16,11 +16,11 @@
 				"userProperties": [
 					{
 						"name": "Source",
-						"value": "adfcontainer/BlobSource/inputEmp_tq.txt"
+						"value": "adfcontainer/BlobSource/*"
 					},
 					{
 						"name": "Destination",
-						"value": "adfcontainer/BlobDestination/inputEmp_tq.txt"
+						"value": "adfcontainer/BlobDestination/*"
 					}
 				],
 				"typeProperties": {
