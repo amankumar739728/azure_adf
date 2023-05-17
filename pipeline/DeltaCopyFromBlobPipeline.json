@@ -72,10 +72,12 @@
 		],
 		"parameters": {
 			"windowStart": {
-				"type": "String"
+				"type": "String",
+				"defaultValue": "2023-05-17T11:10:00Z"
 			},
 			"windowEnd": {
-				"type": "String"
+				"type": "String",
+				"defaultValue": "2023-05-17T11:15:00Z"
 			}
 		},
 		"annotations": []
