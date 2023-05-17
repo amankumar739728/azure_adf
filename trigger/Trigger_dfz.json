@@ -2,27 +2,21 @@
 	"name": "Trigger_dfz",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Stopped",
+		"runtimeState": "Started",
 		"pipeline": {
 			"pipelineReference": {
 				"referenceName": "DeltaCopyFromBlobPipeline",
 				"type": "PipelineReference"
 			},
 			"parameters": {
-				"windowStart": {
-					"type": "Expression",
-					"value": "@trigger().outputs.windowStartTime"
-				},
-				"windowEnd": {
-					"type": "Expression",
-					"value": "@trigger().outputs.windowEndTime"
-				}
+				"windowStart": "2023-05-17T11:42:00Z",
+				"windowEnd": "2023-05-17T11:47:00Z"
 			}
 		},
 		"type": "TumblingWindowTrigger",
 		"typeProperties": {
 			"frequency": "Minute",
-			"interval": 5,
+			"interval": 15,
 			"startTime": "2023-05-17T10:41:00Z",
 			"delay": "00:00:00",
 			"maxConcurrency": 50,
