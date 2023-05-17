@@ -56,11 +56,11 @@
 						"userProperties": [
 							{
 								"name": "Source",
-								"value": "adfcontainer/BlobSource/inputEmp_tq.txt"
+								"value": "adfcontainer/BlobSource/*"
 							},
 							{
 								"name": "Destination",
-								"value": "adfcontainer/BlobDestination/inputEmp_tq.txt"
+								"value": "adfcontainer/BlobDestination/*"
 							}
 						],
 						"typeProperties": {
@@ -703,7 +703,6 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "inputEmp_tq.txt",
 						"folderPath": "BlobDestination",
 						"container": "adfcontainer"
 					}
