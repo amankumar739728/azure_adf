@@ -76,7 +76,8 @@
 									"modifiedDatetimeEnd": {
 										"value": "@pipeline().parameters.windowEnd",
 										"type": "Expression"
-									}
+									},
+									"deleteFilesAfterCompletion": false
 								},
 								"formatSettings": {
 									"type": "BinaryReadSettings"
