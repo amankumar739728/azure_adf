@@ -674,6 +674,9 @@
 					"referenceName": "azure_adls_for_adf",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "ADLS_datasets"
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
@@ -701,6 +704,9 @@
 				"linkedServiceName": {
 					"referenceName": "azure_adls_for_adf",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "ADLS_datasets"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -756,6 +762,9 @@
 					"referenceName": "azure_adls_for_adf",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "ADLS_datasets"
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
@@ -798,6 +807,9 @@
 					"referenceName": "azure_adls_for_adf",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "ADLS_datasets"
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
@@ -835,6 +847,9 @@
 				"linkedServiceName": {
 					"referenceName": "azure_adls_for_adf",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "ADLS_datasets"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -958,6 +973,9 @@
 					"referenceName": "AzureSqlDatabase1",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "ADLS_datasets"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [
@@ -992,6 +1010,9 @@
 				"linkedServiceName": {
 					"referenceName": "AzureSqlDatabase1",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "ADLS_datasets"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -1075,6 +1096,9 @@
 					"referenceName": "azure_adls_for_adf",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "ADLS_datasets"
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
@@ -1103,6 +1127,9 @@
 				"linkedServiceName": {
 					"referenceName": "azure_adls_for_adf",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "ADLS_datasets"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -1138,6 +1165,9 @@
 					"referenceName": "AzureBlobStorage3",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "ADLS_datasets"
+				},
 				"annotations": [],
 				"type": "Json",
 				"typeProperties": {
@@ -1160,6 +1190,9 @@
 				"linkedServiceName": {
 					"referenceName": "AzureBlobStorage2",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "ADLS_datasets"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
