@@ -1,0 +1,79 @@
+{
+	"name": "DelimitedText1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage4",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "output"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "VendorID",
+				"type": "String"
+			},
+			{
+				"name": "PassengerCount",
+				"type": "String"
+			},
+			{
+				"name": "TripDistance",
+				"type": "String"
+			},
+			{
+				"name": "PickupTime",
+				"type": "String"
+			},
+			{
+				"name": "DropTime",
+				"type": "String"
+			},
+			{
+				"name": "PickupLocationId",
+				"type": "String"
+			},
+			{
+				"name": "DropLocationId",
+				"type": "String"
+			},
+			{
+				"name": "TotalAmount",
+				"type": "String"
+			},
+			{
+				"name": "PaymentType",
+				"type": "String"
+			},
+			{
+				"name": "TripYear",
+				"type": "String"
+			},
+			{
+				"name": "TripMonth",
+				"type": "String"
+			},
+			{
+				"name": "TripDay",
+				"type": "String"
+			},
+			{
+				"name": "TripTimeInMinutes",
+				"type": "String"
+			},
+			{
+				"name": "TripType",
+				"type": "String"
+			}
+		]
+	}
+}
