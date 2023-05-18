@@ -694,7 +694,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline_4_dataflow_filterandsort')]",
+			"name": "[concat(parameters('factoryName'), '/Demo 9- pipeline_4_dataflow_filterandsort')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -733,6 +733,9 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Demo Pipeline"
 				},
 				"annotations": []
 			},
@@ -1402,6 +1405,9 @@
 					"referenceName": "AzureBlobStorage4",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "ADLS_datasets"
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
@@ -1818,6 +1824,28 @@
 				"[concat(variables('factoryId'), '/datasets/az_SQLDB_dbo_greentaxi')]",
 				"[concat(variables('factoryId'), '/datasets/az_sql_ADLS_data_movement')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"name": "source1"
+						}
+					],
+					"sinks": [],
+					"transformations": [],
+					"scriptLines": [
+						"source(allowSchemaDrift: true,",
+						"     validateSchema: false) ~> source1"
+					]
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }
