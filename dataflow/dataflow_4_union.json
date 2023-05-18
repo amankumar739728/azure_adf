@@ -1,0 +1,101 @@
+{
+	"name": "dataflow_4_union",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "emp_US",
+						"type": "DatasetReference"
+					},
+					"name": "empUS"
+				},
+				{
+					"dataset": {
+						"referenceName": "emp_IND",
+						"type": "DatasetReference"
+					},
+					"name": "empIND"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "union1"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "select3"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ID as integer,",
+				"          name as string,",
+				"          salary as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     partitionBy('hash', 1)) ~> empUS",
+				"source(output(",
+				"          ID as integer,",
+				"          name as string,",
+				"          salary as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> empIND",
+				"empUS, empIND union(byName: true,",
+				"     partitionBy('hash', 1))~> union1",
+				"union1 aggregate(salary = avg(salary)) ~> aggregate1",
+				"union1, aggregate1 join(union1@salary == aggregate1@salary,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"select1 split(salary>62400,",
+				"     disjoint: false) ~> split1@(high, low)",
+				"join1 select(mapColumn(",
+				"          ID,",
+				"          name,",
+				"          salary = union1@salary,",
+				"          salaryprime = aggregate1@salary",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"split1@high select(mapColumn(",
+				"          ID,",
+				"          name,",
+				"          salary",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"split1@low select(mapColumn(",
+				"          ID,",
+				"          name,",
+				"          salary",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3"
+			]
+		}
+	}
+}
