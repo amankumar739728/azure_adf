@@ -5,6 +5,9 @@
 			"referenceName": "AzureBlobStorage3",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "ADLS_datasets"
+		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {
