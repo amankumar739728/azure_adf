@@ -1460,13 +1460,13 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Demo 6-Execute DataFlow')]",
+			"name": "[concat(parameters('factoryName'), '/Demo 11-pipeline4uniondataflow4highandlowsalary')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Run DataFlow Demo-6",
+						"name": "Data flow1",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -1479,13 +1479,14 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Dataflow Demo",
+								"referenceName": "dataflow_4_union",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"ProductsAll": {},
-									"ProductModels": {},
-									"ProductsFinal": {}
+									"empUS": {},
+									"empIND": {},
+									"sink1": {},
+									"sink2": {}
 								}
 							},
 							"staging": {},
@@ -1504,11 +1505,10 @@
 				"folder": {
 					"name": "Demo Pipeline"
 				},
-				"annotations": [],
-				"lastPublishTime": "2023-05-16T10:29:47Z"
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/Dataflow Demo')]"
+				"[concat(variables('factoryId'), '/dataflows/dataflow_4_union')]"
 			]
 		}
 	]
