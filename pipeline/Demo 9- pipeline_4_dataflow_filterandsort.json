@@ -1,5 +1,5 @@
 {
-	"name": "pipeline_4_dataflow_filterandsort",
+	"name": "Demo 9- pipeline_4_dataflow_filterandsort",
 	"properties": {
 		"activities": [
 			{
@@ -27,6 +27,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Demo Pipeline"
+		},
 		"annotations": []
 	}
 }
