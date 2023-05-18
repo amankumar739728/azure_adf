@@ -19,7 +19,22 @@
 					"name": "empIND"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "highsalary",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "lowsalary",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
 			"transformations": [
 				{
 					"name": "union1"
@@ -65,7 +80,8 @@
 				"     format: 'table') ~> empIND",
 				"empUS, empIND union(byName: true,",
 				"     partitionBy('hash', 1))~> union1",
-				"union1 aggregate(salary = avg(salary)) ~> aggregate1",
+				"union1 aggregate(salary = avg(salary),",
+				"     partitionBy('hash', 1)) ~> aggregate1",
 				"union1, aggregate1 join(union1@salary == aggregate1@salary,",
 				"     joinType:'outer',",
 				"     matchType:'exact',",
@@ -94,7 +110,57 @@
 				"          salary",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select3"
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     filePattern:'concat(\\'highsalary\\',\\'[-n].csv\\')',",
+				"     truncate: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1",
+				"select3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ProductKey as string,",
+				"          OrderDateKey as string,",
+				"          DueDateKey as string,",
+				"          ShipDateKey as string,",
+				"          CustomerKey as string,",
+				"          PromotionKey as string,",
+				"          CurrencyKey as string,",
+				"          SalesTerritoryKey as string,",
+				"          SalesOrderNumber as string,",
+				"          SalesOrderLineNumber as string,",
+				"          RevisionNumber as string,",
+				"          OrderQuantity as string,",
+				"          UnitPrice as string,",
+				"          ExtendedAmount as string,",
+				"          UnitPriceDiscountPct as string,",
+				"          DiscountAmount as string,",
+				"          ProductStandardCost as string,",
+				"          TotalProductCost as string,",
+				"          SalesAmount as string,",
+				"          TaxAmt as string,",
+				"          Freight as string,",
+				"          CarrierTrackingNumber as string,",
+				"          CustomerPONumber as string,",
+				"          OrderDate as string,",
+				"          DueDate as string,",
+				"          ShipDate as string",
+				"     ),",
+				"     filePattern:'concat(\\'lowsalary\\',\\'[-n].csv\\')',",
+				"     truncate: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink2"
 			]
 		}
 	}
