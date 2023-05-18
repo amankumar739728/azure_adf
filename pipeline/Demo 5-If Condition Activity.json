@@ -117,6 +117,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Demo Pipeline"
+		},
 		"annotations": [],
 		"lastPublishTime": "2023-05-16T07:32:25Z"
 	},
