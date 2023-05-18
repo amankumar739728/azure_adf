@@ -104,6 +104,250 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/emp_IND')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "salary",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "employee_IND"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/emp_US')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "salary",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "employee_US"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/highsalary')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage4",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "highsalary",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lowsalary')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage4",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "lowsalary",
+						"container": "output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ProductKey",
+						"type": "String"
+					},
+					{
+						"name": "OrderDateKey",
+						"type": "String"
+					},
+					{
+						"name": "DueDateKey",
+						"type": "String"
+					},
+					{
+						"name": "ShipDateKey",
+						"type": "String"
+					},
+					{
+						"name": "CustomerKey",
+						"type": "String"
+					},
+					{
+						"name": "PromotionKey",
+						"type": "String"
+					},
+					{
+						"name": "CurrencyKey",
+						"type": "String"
+					},
+					{
+						"name": "SalesTerritoryKey",
+						"type": "String"
+					},
+					{
+						"name": "SalesOrderNumber",
+						"type": "String"
+					},
+					{
+						"name": "SalesOrderLineNumber",
+						"type": "String"
+					},
+					{
+						"name": "RevisionNumber",
+						"type": "String"
+					},
+					{
+						"name": "OrderQuantity",
+						"type": "String"
+					},
+					{
+						"name": "UnitPrice",
+						"type": "String"
+					},
+					{
+						"name": "ExtendedAmount",
+						"type": "String"
+					},
+					{
+						"name": "UnitPriceDiscountPct",
+						"type": "String"
+					},
+					{
+						"name": "DiscountAmount",
+						"type": "String"
+					},
+					{
+						"name": "ProductStandardCost",
+						"type": "String"
+					},
+					{
+						"name": "TotalProductCost",
+						"type": "String"
+					},
+					{
+						"name": "SalesAmount",
+						"type": "String"
+					},
+					{
+						"name": "TaxAmt",
+						"type": "String"
+					},
+					{
+						"name": "Freight",
+						"type": "String"
+					},
+					{
+						"name": "CarrierTrackingNumber",
+						"type": "String"
+					},
+					{
+						"name": "CustomerPONumber",
+						"type": "String"
+					},
+					{
+						"name": "OrderDate",
+						"type": "String"
+					},
+					{
+						"name": "DueDate",
+						"type": "String"
+					},
+					{
+						"name": "ShipDate",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Demo 1-CopyPipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -901,6 +1145,181 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/dataflow_4_union')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "emp_US",
+								"type": "DatasetReference"
+							},
+							"name": "empUS"
+						},
+						{
+							"dataset": {
+								"referenceName": "emp_IND",
+								"type": "DatasetReference"
+							},
+							"name": "empIND"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "highsalary",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "lowsalary",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						}
+					],
+					"transformations": [
+						{
+							"name": "union1"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "join1"
+						},
+						{
+							"name": "split1"
+						},
+						{
+							"name": "select1"
+						},
+						{
+							"name": "select2"
+						},
+						{
+							"name": "select3"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          ID as integer,",
+						"          name as string,",
+						"          salary as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table',",
+						"     partitionBy('hash', 1)) ~> empUS",
+						"source(output(",
+						"          ID as integer,",
+						"          name as string,",
+						"          salary as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> empIND",
+						"empUS, empIND union(byName: true,",
+						"     partitionBy('hash', 1))~> union1",
+						"union1 aggregate(salary = avg(salary),",
+						"     partitionBy('hash', 1)) ~> aggregate1",
+						"union1, aggregate1 join(union1@salary == aggregate1@salary,",
+						"     joinType:'outer',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"select1 split(salary>62400,",
+						"     disjoint: false) ~> split1@(high, low)",
+						"join1 select(mapColumn(",
+						"          ID,",
+						"          name,",
+						"          salary = union1@salary,",
+						"          salaryprime = aggregate1@salary",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"split1@high select(mapColumn(",
+						"          ID,",
+						"          name,",
+						"          salary",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select2",
+						"split1@low select(mapColumn(",
+						"          ID,",
+						"          name,",
+						"          salary",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select3",
+						"select2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          Column_1 as string,",
+						"          Column_2 as string,",
+						"          Column_3 as string,",
+						"          Column_4 as string,",
+						"          Column_5 as string,",
+						"          Column_6 as string",
+						"     ),",
+						"     filePattern:'concat(\\'highsalary\\',\\'[-n].csv\\')',",
+						"     truncate: true,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1",
+						"select3 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ProductKey as string,",
+						"          OrderDateKey as string,",
+						"          DueDateKey as string,",
+						"          ShipDateKey as string,",
+						"          CustomerKey as string,",
+						"          PromotionKey as string,",
+						"          CurrencyKey as string,",
+						"          SalesTerritoryKey as string,",
+						"          SalesOrderNumber as string,",
+						"          SalesOrderLineNumber as string,",
+						"          RevisionNumber as string,",
+						"          OrderQuantity as string,",
+						"          UnitPrice as string,",
+						"          ExtendedAmount as string,",
+						"          UnitPriceDiscountPct as string,",
+						"          DiscountAmount as string,",
+						"          ProductStandardCost as string,",
+						"          TotalProductCost as string,",
+						"          SalesAmount as string,",
+						"          TaxAmt as string,",
+						"          Freight as string,",
+						"          CarrierTrackingNumber as string,",
+						"          CustomerPONumber as string,",
+						"          OrderDate as string,",
+						"          DueDate as string,",
+						"          ShipDate as string",
+						"     ),",
+						"     filePattern:'concat(\\'lowsalary\\',\\'[-n].csv\\')',",
+						"     truncate: true,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink2"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/emp_US')]",
+				"[concat(variables('factoryId'), '/datasets/emp_IND')]",
+				"[concat(variables('factoryId'), '/datasets/highsalary')]",
+				"[concat(variables('factoryId'), '/datasets/lowsalary')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dataflow_for_join')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1090,107 +1509,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/Dataflow Demo')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Demo 7-TransformMovies')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "TransformMovies",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "dataflow_4_TransformMovies",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"MoviesDB": {},
-									"DestinationFolder": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Demo Pipeline"
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-05-17T04:53:51Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/dataflow_4_TransformMovies')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Demo 9- pipeline_4_dataflow_filterandsort')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Data flow pipeline",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "dataflow_4_filterandsort",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"sourceassqldb": {},
-									"destinationadls": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Demo Pipeline"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/dataflow_4_filterandsort')]"
 			]
 		}
 	]
