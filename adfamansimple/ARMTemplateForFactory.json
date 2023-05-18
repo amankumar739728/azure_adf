@@ -110,6 +110,9 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"folder": {
+					"name": "Demo Pipeline"
+				},
 				"annotations": [],
 				"lastPublishTime": "2023-05-15T10:16:56Z"
 			},
@@ -161,6 +164,9 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Demo Pipeline"
 				},
 				"annotations": [],
 				"lastPublishTime": "2023-05-15T10:16:56Z"
@@ -263,6 +269,9 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"folder": {
+					"name": "Demo Pipeline"
+				},
 				"annotations": [],
 				"lastPublishTime": "2023-05-15T10:16:56Z"
 			},
@@ -356,6 +365,9 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Demo Pipeline"
 				},
 				"annotations": [],
 				"lastPublishTime": "2023-05-15T10:16:56Z"
@@ -492,6 +504,9 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"folder": {
+					"name": "Demo Pipeline"
+				},
 				"annotations": [],
 				"lastPublishTime": "2023-05-16T07:32:25Z"
 			},
@@ -542,6 +557,9 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"folder": {
+					"name": "Demo Pipeline"
+				},
 				"annotations": [],
 				"lastPublishTime": "2023-05-16T10:29:47Z"
 			},
@@ -589,6 +607,9 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Demo Pipeline"
 				},
 				"annotations": [],
 				"lastPublishTime": "2023-05-17T04:53:51Z"
@@ -657,6 +678,9 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Demo Pipeline"
 				},
 				"annotations": []
 			},

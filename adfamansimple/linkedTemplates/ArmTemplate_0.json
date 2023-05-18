@@ -877,6 +877,9 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"folder": {
+					"name": "Demo Pipeline"
+				},
 				"annotations": [],
 				"lastPublishTime": "2023-05-15T10:16:56Z"
 			},
@@ -928,6 +931,9 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Demo Pipeline"
 				},
 				"annotations": [],
 				"lastPublishTime": "2023-05-15T10:16:56Z"
