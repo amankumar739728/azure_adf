@@ -1,0 +1,159 @@
+{
+	"name": "dataflow_lowandhighsalary",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "emp_US",
+						"type": "DatasetReference"
+					},
+					"name": "empus"
+				},
+				{
+					"dataset": {
+						"referenceName": "emp_IND",
+						"type": "DatasetReference"
+					},
+					"name": "empind"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "highsalary",
+						"type": "DatasetReference"
+					},
+					"name": "sink1highsalry"
+				},
+				{
+					"dataset": {
+						"referenceName": "lowsalary",
+						"type": "DatasetReference"
+					},
+					"name": "sink2lowsalary"
+				}
+			],
+			"transformations": [
+				{
+					"name": "union1"
+				},
+				{
+					"name": "window1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "highsalaryemp"
+				},
+				{
+					"name": "lowsalary"
+				},
+				{
+					"name": "sort1"
+				},
+				{
+					"name": "sort2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ID as integer,",
+				"          name as string,",
+				"          salary as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     partitionBy('hash', 1)) ~> empus",
+				"source(output(",
+				"          ID as integer,",
+				"          name as string,",
+				"          salary as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     partitionBy('hash', 1)) ~> empind",
+				"empus, empind union(byName: true)~> union1",
+				"union1 window(avg_salary = avg(salary)) ~> window1",
+				"window1 derive(Category = iif(salary > avg_salary, 'highsalary', 'lowsalary')) ~> derivedColumn1",
+				"derivedColumn1 split(Category=='highsalary',",
+				"     disjoint: false) ~> split1@(highsalary, lowsalary)",
+				"split1@highsalary select(mapColumn(",
+				"          ID,",
+				"          name,",
+				"          salary",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> highsalaryemp",
+				"split1@lowsalary select(mapColumn(",
+				"          ID,",
+				"          name,",
+				"          salary",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> lowsalary",
+				"highsalaryemp sort(desc(salary, true)) ~> sort1",
+				"lowsalary sort(asc(salary, true)) ~> sort2",
+				"sort1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string",
+				"     ),",
+				"     filePattern:'highsalary.csv',",
+				"     truncate: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1highsalry",
+				"sort2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ProductKey as string,",
+				"          OrderDateKey as string,",
+				"          DueDateKey as string,",
+				"          ShipDateKey as string,",
+				"          CustomerKey as string,",
+				"          PromotionKey as string,",
+				"          CurrencyKey as string,",
+				"          SalesTerritoryKey as string,",
+				"          SalesOrderNumber as string,",
+				"          SalesOrderLineNumber as string,",
+				"          RevisionNumber as string,",
+				"          OrderQuantity as string,",
+				"          UnitPrice as string,",
+				"          ExtendedAmount as string,",
+				"          UnitPriceDiscountPct as string,",
+				"          DiscountAmount as string,",
+				"          ProductStandardCost as string,",
+				"          TotalProductCost as string,",
+				"          SalesAmount as string,",
+				"          TaxAmt as string,",
+				"          Freight as string,",
+				"          CarrierTrackingNumber as string,",
+				"          CustomerPONumber as string,",
+				"          OrderDate as string,",
+				"          DueDate as string,",
+				"          ShipDate as string",
+				"     ),",
+				"     filePattern:'lowsalary.csv',",
+				"     truncate: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink2lowsalary"
+			]
+		}
+	}
+}
