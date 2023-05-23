@@ -13,6 +13,30 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/az_blob_sinkdataset_Json1_format')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage3",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "ADLS_datasets"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "output"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/az_blob_source_dataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1013,8 +1037,101 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/az_blob_source_dataset')]"
+				"[concat(variables('factoryId'), '/datasets/az_blob_source_dataset')]",
+				"[concat(variables('factoryId'), '/datasets/az_blob_sinkdataset_Json1_format')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lookup_4_delete_empid')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSqlTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup1').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Stored procedure1",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[dbo].[delete_resign_id]",
+										"storedProcedureParameters": {
+											"ID": {
+												"value": {
+													"value": "@string(item().ID)",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase1",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Dataflow Demo')]",
@@ -1445,262 +1562,6 @@
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     partitionBy('hash', 1)) ~> sink2"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/emp_US')]",
-				"[concat(variables('factoryId'), '/datasets/emp_IND')]",
-				"[concat(variables('factoryId'), '/datasets/highsalary')]",
-				"[concat(variables('factoryId'), '/datasets/lowsalary')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataflow_for_join')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "az_sql_dbo_employee",
-								"type": "DatasetReference"
-							},
-							"name": "employee"
-						},
-						{
-							"dataset": {
-								"referenceName": "az_sql_dbo_department",
-								"type": "DatasetReference"
-							},
-							"name": "department"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "DelimitedText1",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "join1"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          ID as integer,",
-						"          name as string,",
-						"          salary as integer",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> employee",
-						"source(output(",
-						"          dept_id as integer,",
-						"          post as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> department",
-						"employee, department join(ID == dept_id,",
-						"     joinType:'inner',",
-						"     matchType:'exact',",
-						"     ignoreSpaces: false,",
-						"     broadcast: 'auto')~> join1",
-						"join1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          VendorID as string,",
-						"          PassengerCount as string,",
-						"          TripDistance as string,",
-						"          PickupTime as string,",
-						"          DropTime as string,",
-						"          PickupLocationId as string,",
-						"          DropLocationId as string,",
-						"          TotalAmount as string,",
-						"          PaymentType as string,",
-						"          TripYear as string,",
-						"          TripMonth as string,",
-						"          TripDay as string,",
-						"          TripTimeInMinutes as string,",
-						"          TripType as string",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/az_sql_dbo_employee')]",
-				"[concat(variables('factoryId'), '/datasets/az_sql_dbo_department')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataflow_lowandhighsalary')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "emp_US",
-								"type": "DatasetReference"
-							},
-							"name": "empus"
-						},
-						{
-							"dataset": {
-								"referenceName": "emp_IND",
-								"type": "DatasetReference"
-							},
-							"name": "empind"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "highsalary",
-								"type": "DatasetReference"
-							},
-							"name": "sink1highsalry"
-						},
-						{
-							"dataset": {
-								"referenceName": "lowsalary",
-								"type": "DatasetReference"
-							},
-							"name": "sink2lowsalary"
-						}
-					],
-					"transformations": [
-						{
-							"name": "union1"
-						},
-						{
-							"name": "window1"
-						},
-						{
-							"name": "derivedColumn1"
-						},
-						{
-							"name": "split1"
-						},
-						{
-							"name": "highsalaryemp"
-						},
-						{
-							"name": "lowsalary"
-						},
-						{
-							"name": "sort1"
-						},
-						{
-							"name": "sort2"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          ID as integer,",
-						"          name as string,",
-						"          salary as integer",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table',",
-						"     partitionBy('hash', 1)) ~> empus",
-						"source(output(",
-						"          ID as integer,",
-						"          name as string,",
-						"          salary as integer",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table',",
-						"     partitionBy('hash', 1)) ~> empind",
-						"empus, empind union(byName: true)~> union1",
-						"union1 window(avg_salary = avg(salary)) ~> window1",
-						"window1 derive(Category = iif(salary > avg_salary, 'highsalary', 'lowsalary')) ~> derivedColumn1",
-						"derivedColumn1 split(Category=='highsalary',",
-						"     disjoint: false) ~> split1@(highsalary, lowsalary)",
-						"split1@highsalary select(mapColumn(",
-						"          ID,",
-						"          name,",
-						"          salary",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> highsalaryemp",
-						"split1@lowsalary select(mapColumn(",
-						"          ID,",
-						"          name,",
-						"          salary",
-						"     ),",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> lowsalary",
-						"highsalaryemp sort(desc(salary, true)) ~> sort1",
-						"lowsalary sort(asc(salary, true)) ~> sort2",
-						"sort1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string,",
-						"          Column_2 as string,",
-						"          Column_3 as string,",
-						"          Column_4 as string,",
-						"          Column_5 as string,",
-						"          Column_6 as string",
-						"     ),",
-						"     filePattern:'highsalary.csv',",
-						"     truncate: true,",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink1highsalry",
-						"sort2 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          ProductKey as string,",
-						"          OrderDateKey as string,",
-						"          DueDateKey as string,",
-						"          ShipDateKey as string,",
-						"          CustomerKey as string,",
-						"          PromotionKey as string,",
-						"          CurrencyKey as string,",
-						"          SalesTerritoryKey as string,",
-						"          SalesOrderNumber as string,",
-						"          SalesOrderLineNumber as string,",
-						"          RevisionNumber as string,",
-						"          OrderQuantity as string,",
-						"          UnitPrice as string,",
-						"          ExtendedAmount as string,",
-						"          UnitPriceDiscountPct as string,",
-						"          DiscountAmount as string,",
-						"          ProductStandardCost as string,",
-						"          TotalProductCost as string,",
-						"          SalesAmount as string,",
-						"          TaxAmt as string,",
-						"          Freight as string,",
-						"          CarrierTrackingNumber as string,",
-						"          CustomerPONumber as string,",
-						"          OrderDate as string,",
-						"          DueDate as string,",
-						"          ShipDate as string",
-						"     ),",
-						"     filePattern:'lowsalary.csv',",
-						"     truncate: true,",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink2lowsalary"
 					]
 				}
 			},
