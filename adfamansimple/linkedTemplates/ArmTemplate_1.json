@@ -718,6 +718,115 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Demo 15-Get Metadata with if else')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "az_ADLS_randomfile",
+								"type": "DatasetReference",
+								"parameters": {
+									"filename": "FactInternetSales_1.csv"
+								}
+							},
+							"fieldList": [
+								"exists",
+								"itemName"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@activity('Get Metadata1').output.exists",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "Set variable2",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "y",
+										"value": {
+											"value": "@string('empty')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "Set variable1",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "x",
+										"value": {
+											"value": "@activity('Get Metadata1').output.itemName",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"x": {
+						"type": "String"
+					},
+					"y": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Demo Pipeline"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Demo 2-GetMetadata_Activity_pipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1371,77 +1480,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataflow_4_filterandsort')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "az_SQLDB_dbo_greentaxi",
-								"type": "DatasetReference"
-							},
-							"name": "sourceassqldb"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "az_sql_ADLS_data_movement",
-								"type": "DatasetReference"
-							},
-							"name": "destinationadls"
-						}
-					],
-					"transformations": [
-						{
-							"name": "filterTripDay4"
-						},
-						{
-							"name": "sortbyTripDistance"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          VendorID as integer,",
-						"          PassengerCount as integer,",
-						"          TripDistance as float,",
-						"          PickupTime as timestamp,",
-						"          DropTime as timestamp,",
-						"          PickupLocationId as string,",
-						"          DropLocationId as string,",
-						"          TotalAmount as float,",
-						"          PaymentType as string,",
-						"          TripYear as integer,",
-						"          TripMonth as integer,",
-						"          TripDay as integer,",
-						"          TripTimeInMinutes as double,",
-						"          TripType as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table',",
-						"     partitionBy('hash', 1)) ~> sourceassqldb",
-						"sourceassqldb filter(TripDistance>=9.73 && TripDay==4,",
-						"     partitionBy('hash', 1)) ~> filterTripDay4",
-						"filterTripDay4 sort(asc(TripDistance, true),",
-						"     caseInsensitive: true,",
-						"     partitionBy('hash', 1)) ~> sortbyTripDistance",
-						"sortbyTripDistance sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> destinationadls"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/az_sql_ADLS_data_movement')]"
-			]
 		}
 	]
 }
