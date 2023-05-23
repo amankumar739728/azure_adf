@@ -1,5 +1,5 @@
 {
-	"name": "lookup_4_delete_empid",
+	"name": "Demo 14-lookup_4_delete_empid",
 	"properties": {
 		"activities": [
 			{
@@ -79,6 +79,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Demo Pipeline"
+		},
 		"annotations": []
 	}
 }
