@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "Incremental_dataset",
+						"referenceName": "az_adls_incremental_dataset",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
@@ -43,6 +43,9 @@
 				"     validateSchema: false,",
 				"     filePattern:'incrementaldata.csv',",
 				"     truncate: true,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     partitionBy('hash', 1)) ~> sink1"
