@@ -455,7 +455,7 @@
 								"referenceName": "az_ADLS_randomfile",
 								"type": "DatasetReference",
 								"parameters": {
-									"filename": "FactInternetSales_1.csv"
+									"filename": "empty.csv"
 								}
 							},
 							"fieldList": [
