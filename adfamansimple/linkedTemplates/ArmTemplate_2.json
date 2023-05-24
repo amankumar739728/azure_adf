@@ -318,6 +318,8 @@
 						"     format: 'table') ~> SqlTablePerson",
 						"SqlTablePerson sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
+						"     filePattern:'incrementaldata.csv',",
+						"     truncate: true,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     partitionBy('hash', 1)) ~> sink1"
