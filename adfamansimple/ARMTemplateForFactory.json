@@ -576,10 +576,7 @@
 								"coreCount": 8,
 								"computeType": "General"
 							},
-							"traceLevel": "Fine",
-							"continuationSettings": {
-								"customizedCheckpointKey": "523946a6-5062-4579-8b60-bc74b9dc2474"
-							}
+							"traceLevel": "Fine"
 						}
 					}
 				],
@@ -2979,12 +2976,13 @@
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     enableCdc: true,",
-						"     mode: 'read',",
+						"     enableNativeCdc: true,",
+						"     netChanges: true,",
 						"     skipInitialLoad: false,",
 						"     waterMarkColumn: 'data_date',",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> SqlTablePerson",
+						"     format: 'table',",
+						"     mode: 'read') ~> SqlTablePerson",
 						"SqlTablePerson sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     filePattern:'incrementaldata.csv',",
