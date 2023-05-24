@@ -1,0 +1,9 @@
+{
+	"name": "Demo 16- Incremental Loading SQL to Blob",
+	"properties": {
+		"folder": {
+			"name": "Demo Pipeline"
+		},
+		"annotations": []
+	}
+}
