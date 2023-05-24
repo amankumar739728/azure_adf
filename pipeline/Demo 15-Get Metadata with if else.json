@@ -19,7 +19,7 @@
 						"referenceName": "az_ADLS_randomfile",
 						"type": "DatasetReference",
 						"parameters": {
-							"filename": "FactInternetSales_1.csv"
+							"filename": "empty.csv"
 						}
 					},
 					"fieldList": [
@@ -28,6 +28,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
