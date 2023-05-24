@@ -13,6 +13,199 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Dataflow Demo')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "az_ADLS_ProductsAll",
+								"type": "DatasetReference"
+							},
+							"name": "ProductsAll"
+						},
+						{
+							"dataset": {
+								"referenceName": "az_ADLS_ProductModel",
+								"type": "DatasetReference"
+							},
+							"name": "ProductModels"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "az_ADLS_ProductFinal",
+								"type": "DatasetReference"
+							},
+							"name": "ProductsFinal"
+						}
+					],
+					"transformations": [
+						{
+							"name": "CombineDatasets"
+						},
+						{
+							"name": "RemoveDuplicateColumns"
+						},
+						{
+							"name": "RemoveNoListPrice"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          ProductID as short,",
+						"          Name as string,",
+						"          ProductNumber as integer,",
+						"          MakeFlag as boolean,",
+						"          FinishedGoodsFlag as boolean,",
+						"          Color as string,",
+						"          SafetyStockLevel as short,",
+						"          ReorderPoint as short,",
+						"          StandardCost as double,",
+						"          ListPrice as double,",
+						"          Size as string,",
+						"          SizeUnitMeasureCode as string,",
+						"          WeightUnitMeasureCode as string,",
+						"          Weight as integer,",
+						"          DaysToManufacture as short,",
+						"          ProductLine as string,",
+						"          Class as string,",
+						"          Style as string,",
+						"          ProductSubcategoryID as string,",
+						"          ProductModelID as string,",
+						"          SellStartDate as timestamp,",
+						"          SellEndDate as timestamp,",
+						"          DiscontinuedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> ProductsAll",
+						"source(output(",
+						"          ProductModelID as string,",
+						"          Name as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> ProductModels",
+						"ProductsAll, ProductModels lookup(ProductsAll@ProductModelID == ProductModels@ProductModelID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> CombineDatasets",
+						"CombineDatasets select(mapColumn(",
+						"          ProductID,",
+						"          Name = ProductsAll@Name,",
+						"          {Model Name} = ProductModels@Name,",
+						"          ProductNumber,",
+						"          MakeFlag,",
+						"          FinishedGoodsFlag,",
+						"          Color,",
+						"          SafetyStockLevel,",
+						"          ReorderPoint,",
+						"          StandardCost,",
+						"          ListPrice,",
+						"          Size,",
+						"          SizeUnitMeasureCode,",
+						"          WeightUnitMeasureCode,",
+						"          Weight,",
+						"          DaysToManufacture,",
+						"          ProductLine,",
+						"          Class,",
+						"          Style,",
+						"          ProductSubcategoryID,",
+						"          ProductModelID = ProductsAll@ProductModelID,",
+						"          SellStartDate,",
+						"          SellEndDate,",
+						"          DiscontinuedDate",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> RemoveDuplicateColumns",
+						"RemoveDuplicateColumns filter(notEquals(ListPrice,0)) ~> RemoveNoListPrice",
+						"RemoveNoListPrice sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ID as string,",
+						"          Fname as string,",
+						"          Lname as string",
+						"     ),",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> ProductsFinal"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow_4_TransformMovies')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "MoviesDB",
+								"type": "DatasetReference"
+							},
+							"name": "MoviesDB"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "MovieRatingWithYear",
+								"type": "DatasetReference"
+							},
+							"name": "DestinationFolder"
+						}
+					],
+					"transformations": [
+						{
+							"name": "FilterYears"
+						},
+						{
+							"name": "AggregateComedyRatings"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          movie as string,",
+						"          title as string,",
+						"          genres as string,",
+						"          year as string,",
+						"          Rating as string,",
+						"          RottenTomato as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     partitionBy('hash', 1)) ~> MoviesDB",
+						"MoviesDB filter(toInteger(year) >=1910 && toInteger(year) <= 2000 && rlike(genres,'Comedy')) ~> FilterYears",
+						"FilterYears aggregate(groupBy(year = toInteger(year)),",
+						"     AverageComedyRating = avg(toInteger(Rating))) ~> AggregateComedyRatings",
+						"AggregateComedyRatings sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     filePattern:(concat('Result', toString(currentTimestamp(),'yyyy-MMdd-HH:mm:ss'),'-[n].csv')),",
+						"     truncate: true,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> DestinationFolder"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dataflow_4_filterandsort')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -76,6 +269,58 @@
 						"     validateSchema: false,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> destinationadls"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow_4_incremental_data_loading')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlTable2",
+								"type": "DatasetReference"
+							},
+							"name": "SqlTablePerson"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Incremental_dataset",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          PersonID as integer,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          data_date as date",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     enableCdc: true,",
+						"     mode: 'read',",
+						"     skipInitialLoad: false,",
+						"     waterMarkColumn: 'data_date',",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> SqlTablePerson",
+						"SqlTablePerson sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sink1"
 					]
 				}
 			},
@@ -655,6 +900,59 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Demo 16- Incremental Loading SQL to Blob')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "dataflow_4_incremental_data_loading",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow_4_incremental_data_loading",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"SqlTablePerson": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine",
+							"continuationSettings": {
+								"customizedCheckpointKey": "523946a6-5062-4579-8b60-bc74b9dc2474"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Demo Pipeline"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow_4_incremental_data_loading')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Demo 6-Execute DataFlow')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -702,7 +1000,9 @@
 				"annotations": [],
 				"lastPublishTime": "2023-05-16T10:29:47Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Dataflow Demo')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Demo 7-TransformMovies')]",
@@ -751,7 +1051,9 @@
 				"annotations": [],
 				"lastPublishTime": "2023-05-17T04:53:51Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow_4_TransformMovies')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Demo 9- pipeline_4_dataflow_filterandsort')]",
