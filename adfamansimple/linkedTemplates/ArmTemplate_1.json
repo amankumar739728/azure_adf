@@ -13,7 +13,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/az_SQLDB_dbo_greentaxi')]",
+			"name": "[concat(parameters('factoryName'), '/az_SQL_Maxdatevalue')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -21,77 +21,10 @@
 					"referenceName": "AzureSqlDatabase1",
 					"type": "LinkedServiceReference"
 				},
-				"folder": {
-					"name": "ADLS_datasets"
-				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "VendorID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PassengerCount",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TripDistance",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PickupTime",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DropTime",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PickupLocationId",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DropLocationId",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TotalAmount",
-						"type": "nvarchar"
-					},
-					{
-						"name": "PaymentType",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TripYear",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "TripMonth",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "TripDay",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "TripTimeInMinutes",
-						"type": "float",
-						"precision": 15
-					},
-					{
-						"name": "TripType",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "greentaxi"
-				}
+				"schema": [],
+				"typeProperties": {}
 			},
 			"dependsOn": []
 		},
@@ -157,6 +90,66 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/az_adls_incremental_dataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azure_adls_for_adf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/az_adls_raw_watermark')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azure_adls_for_adf",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
+						"folderPath": "watermark",
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
 			},
 			"dependsOn": []
 		},
@@ -347,6 +340,41 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/az_sql_Source_File_asSource')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "FileId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "FileName",
+						"type": "varchar"
+					},
+					{
+						"name": "LastModifiedtime",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "File_Source"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/az_sql_dbo_department')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -405,6 +433,36 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "employee"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/az_sql_watermarktable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "TableName",
+						"type": "varchar"
+					},
+					{
+						"name": "watermarkvalue",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "watermarktable"
 				}
 			},
 			"dependsOn": []
@@ -942,14 +1000,14 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Demo 2-GetMetadata_Activity_pipeline')]",
+			"name": "[concat(parameters('factoryName'), '/Demo 17-Incrementaldataloading')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Get Metadata Last Modified Date",
-						"type": "GetMetadata",
+						"name": "Lookup_watermarktable",
+						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -960,86 +1018,56 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
 							"dataset": {
-								"referenceName": "az_adls_InputEmp_tq",
+								"referenceName": "az_sql_watermarktable",
 								"type": "DatasetReference",
 								"parameters": {}
-							},
-							"fieldList": [
-								"lastModified",
-								"size",
-								"itemName"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Demo Pipeline"
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-05-15T10:16:56Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/az_adls_InputEmp_tq')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Demo 3-GetMetadata_StoredProcedure')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Get Metadata Last Modified Date",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "az_adls_InputEmp_tq",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"fieldList": [
-								"lastModified",
-								"size",
-								"itemName"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
 							}
 						}
 					},
 					{
-						"name": "usp_InsertLastModified",
-						"type": "SqlServerStoredProcedure",
+						"name": "Lookup_File_Source",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select max(LastModifiedtime) as latest_date\nfrom File_Source;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "az_SQL_Maxdatevalue",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "Get Metadata Last Modified Date",
+								"activity": "Lookup_watermarktable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Lookup_File_Source",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1054,28 +1082,91 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"storedProcedureName": "[[dbo].[usp_InsertLastModifiedDate]",
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select * from File_Source\nwhere LastModifiedtime >'@{activity('Lookup_watermarktable').output.firstRow.watermarkvalue}'\nAND \nLastModifiedtime <= '@{activity('Lookup_File_Source').output.firstRow.latest_date}'",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "az_sql_Source_File_asSource",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "az_adls_raw_watermark",
+								"type": "DatasetReference",
+								"parameters": {
+									"FileName": {
+										"value": "watermark.csv",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Stored procedure1",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[update_watermarktable]",
 							"storedProcedureParameters": {
-								"Filename": {
+								"LastModifiedtime": {
 									"value": {
-										"value": "@activity('Get Metadata Last Modified Date').output.itemName",
+										"value": "@activity('Lookup_File_Source').output.firstRow.latest_date",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"TableName": {
+									"value": {
+										"value": "@activity('Lookup_watermarktable').output.firstRow.TableName",
 										"type": "Expression"
 									},
 									"type": "String"
-								},
-								"LastModifiedDate": {
-									"value": {
-										"value": "@activity('Get Metadata Last Modified Date').output.lastModified",
-										"type": "Expression"
-									},
-									"type": "DateTime"
-								},
-								"RecordInsertDate": {
-									"value": {
-										"value": "@convertFromUtc(utcnow(),'Eastern Standard Time')",
-										"type": "Expression"
-									},
-									"type": "DateTime"
 								}
 							}
 						},
@@ -1089,318 +1180,18 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"folder": {
-					"name": "Demo Pipeline"
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-05-15T10:16:56Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/az_adls_InputEmp_tq')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Demo 4-Lookup Activity')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Get Metadata Last Modified Date",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "az_adls_InputEmp_tq",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"fieldList": [
-								"lastModified",
-								"size",
-								"itemName"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
-						}
-					},
-					{
-						"name": "Lookup Last Execution Date",
-						"type": "Lookup",
-						"dependsOn": [
-							{
-								"activity": "Get Metadata Last Modified Date",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "[[dbo].[usp_LastLoadDate]",
-								"storedProcedureParameters": {
-									"Name": {
-										"type": "String",
-										"value": {
-											"value": "@activity('Get Metadata Last Modified Date').output.itemName",
-											"type": "Expression"
-										}
-									}
-								},
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "az_SQLDB_dbo_emp",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
+				"variables": {
+					"watermark": {
+						"type": "String"
 					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Demo Pipeline"
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-05-15T10:16:56Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/az_adls_InputEmp_tq')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Demo 5-If Condition Activity')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Get Metadata Last Modified Date",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "az_adls_InputEmp_tq",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"fieldList": [
-								"lastModified",
-								"size",
-								"itemName"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
-						}
-					},
-					{
-						"name": "Lookup Last Execution Date",
-						"type": "Lookup",
-						"dependsOn": [
-							{
-								"activity": "Get Metadata Last Modified Date",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "[[dbo].[usp_LastLoadDate]",
-								"storedProcedureParameters": {
-									"Name": {
-										"type": "String",
-										"value": {
-											"value": "@activity('Get Metadata Last Modified Date').output.itemName",
-											"type": "Expression"
-										}
-									}
-								},
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "az_SQLDB_dbo_emp",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
-					},
-					{
-						"name": "If Condition Test Dates",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "Lookup Last Execution Date",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@greaterOrEquals(addHours(formatDateTime(activity('Get Metadata Last Modified Date').output.lastModified,'o'),-4),activity('Lookup Last Execution Date').output.firstRow.ExecutionDate)",
-								"type": "Expression"
-							},
-							"ifFalseActivities": [
-								{
-									"name": "Wait_4_False",
-									"type": "Wait",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"waitTimeInSeconds": 1
-									}
-								}
-							],
-							"ifTrueActivities": [
-								{
-									"name": "wait_4_True",
-									"type": "Wait",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"waitTimeInSeconds": 1
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Demo Pipeline"
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-05-16T07:32:25Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/az_adls_InputEmp_tq')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Demo 8- copy data input to output container')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy_input_2_output_container",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "az_blob_source_dataset",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "az_blob_sinkdataset_Json1_format",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"folder": {
-					"name": "Demo Pipeline"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/az_blob_source_dataset')]",
-				"[concat(variables('factoryId'), '/datasets/az_blob_sinkdataset_Json1_format')]"
+				"[concat(variables('factoryId'), '/datasets/az_sql_watermarktable')]",
+				"[concat(variables('factoryId'), '/datasets/az_SQL_Maxdatevalue')]",
+				"[concat(variables('factoryId'), '/datasets/az_sql_Source_File_asSource')]",
+				"[concat(variables('factoryId'), '/datasets/az_adls_raw_watermark')]"
 			]
 		}
 	]

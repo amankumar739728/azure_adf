@@ -386,33 +386,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Incremental_dataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureBlobStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "raw"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/MovieRatingWithYear')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -880,6 +853,91 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "emp"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/az_SQLDB_dbo_greentaxi')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "ADLS_datasets"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "VendorID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PassengerCount",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TripDistance",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PickupTime",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DropTime",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PickupLocationId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DropLocationId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TotalAmount",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PaymentType",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TripYear",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "TripMonth",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "TripDay",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "TripTimeInMinutes",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "TripType",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "greentaxi"
 				}
 			},
 			"dependsOn": [
