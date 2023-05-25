@@ -18,7 +18,11 @@
 						"referenceName": "az_adls_incremental_dataset",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "sink1",
+					"rejectedDataLinkedService": {
+						"referenceName": "azure_adls_for_adf",
+						"type": "LinkedServiceReference"
+					}
 				}
 			],
 			"transformations": [],
@@ -37,12 +41,10 @@
 				"     skipInitialLoad: false,",
 				"     waterMarkColumn: 'data_date',",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table',",
-				"     partitionBy('hash', 1)) ~> SqlTablePerson",
+				"     format: 'table') ~> SqlTablePerson",
 				"SqlTablePerson sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     filePattern:'incrementaldata.csv',",
-				"     truncate: true,",
+				"     filePattern:'incremental1.csv',",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
