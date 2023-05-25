@@ -359,7 +359,7 @@
 								"partitionOption": "None"
 							},
 							"dataset": {
-								"referenceName": "AzureSqlTable1",
+								"referenceName": "az_sql_dbo_resign_employee",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -428,7 +428,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/az_sql_dbo_resign_employee')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
 			]
 		},
@@ -567,8 +567,8 @@
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"SqlTablePerson": {},
-									"sink1": {}
+									"sourcesqlPersontable": {},
+									"sinkrawcontainer": {}
 								}
 							},
 							"staging": {},
@@ -1414,86 +1414,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "ID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "resign_date",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "name",
-						"type": "varchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "resign_employee"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlTable2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "PersonID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "FirstName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "MiddleName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "data_date",
-						"type": "date"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Person"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/DelimitedText1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2224,33 +2144,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/az_adls_incremental_dataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "azure_adls_for_adf",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileSystem": "raw"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/azure_adls_for_adf')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/az_adls_raw_watermark')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2517,6 +2410,49 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/az_sql_dbo_Person')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "PersonID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "FirstName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MiddleName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "data_date",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Person"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/az_sql_dbo_department')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2584,6 +2520,43 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/az_sql_dbo_resign_employee')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "resign_date",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "name",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "resign_employee"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/az_sql_watermarktable')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2613,6 +2586,54 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azure_adls_increment_dataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azure_adls_for_adf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "PersonID",
+						"type": "String"
+					},
+					{
+						"name": "FirstName",
+						"type": "String"
+					},
+					{
+						"name": "MiddleName",
+						"type": "String"
+					},
+					{
+						"name": "LastName",
+						"type": "String"
+					},
+					{
+						"name": "data_date",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azure_adls_for_adf')]"
 			]
 		},
 		{
@@ -3276,26 +3297,26 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "AzureSqlTable2",
+								"referenceName": "az_sql_dbo_Person",
 								"type": "DatasetReference"
 							},
-							"name": "SqlTablePerson"
+							"name": "sourcesqlPersontable"
 						}
 					],
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "az_adls_incremental_dataset",
+								"referenceName": "azure_adls_increment_dataset",
 								"type": "DatasetReference"
 							},
-							"name": "sink1",
-							"rejectedDataLinkedService": {
-								"referenceName": "azure_adls_for_adf",
-								"type": "LinkedServiceReference"
-							}
+							"name": "sinkrawcontainer"
 						}
 					],
-					"transformations": [],
+					"transformations": [
+						{
+							"name": "filterbasedondatadate"
+						}
+					],
 					"scriptLines": [
 						"source(output(",
 						"          PersonID as integer,",
@@ -3308,26 +3329,33 @@
 						"     validateSchema: false,",
 						"     enableCdc: true,",
 						"     mode: 'read',",
-						"     skipInitialLoad: false,",
+						"     skipInitialLoad: true,",
 						"     waterMarkColumn: 'data_date',",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     format: 'table') ~> SqlTablePerson",
-						"SqlTablePerson sink(allowSchemaDrift: true,",
+						"     format: 'table') ~> sourcesqlPersontable",
+						"sourcesqlPersontable filter(data_date > toDate('2022-05-05')) ~> filterbasedondatadate",
+						"filterbasedondatadate sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     filePattern:'incremental1.csv',",
+						"     input(",
+						"          PersonID as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          data_date as string",
+						"     ),",
+						"     filePattern:('aman1.csv'),",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> sink1"
+						"     partitionBy('hash', 1)) ~> sinkrawcontainer"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]",
-				"[concat(variables('factoryId'), '/datasets/az_adls_incremental_dataset')]",
-				"[concat(variables('factoryId'), '/linkedServices/azure_adls_for_adf')]"
+				"[concat(variables('factoryId'), '/datasets/az_sql_dbo_Person')]",
+				"[concat(variables('factoryId'), '/datasets/azure_adls_increment_dataset')]"
 			]
 		},
 		{
