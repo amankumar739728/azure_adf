@@ -52,7 +52,7 @@
 				"          LastName as string,",
 				"          data_date as string",
 				"     ),",
-				"     filePattern:(aman1.csv),",
+				"     filePattern:('aman1.csv'),",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
