@@ -6,26 +6,26 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "AzureSqlTable2",
+						"referenceName": "az_sql_dbo_Person",
 						"type": "DatasetReference"
 					},
-					"name": "SqlTablePerson"
+					"name": "sourcesqlPersontable"
 				}
 			],
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "az_adls_incremental_dataset",
+						"referenceName": "azure_adls_increment_dataset",
 						"type": "DatasetReference"
 					},
-					"name": "sink1",
-					"rejectedDataLinkedService": {
-						"referenceName": "azure_adls_for_adf",
-						"type": "LinkedServiceReference"
-					}
+					"name": "sinkrawcontainer"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "filterbasedondatadate"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          PersonID as integer,",
@@ -38,19 +38,27 @@
 				"     validateSchema: false,",
 				"     enableCdc: true,",
 				"     mode: 'read',",
-				"     skipInitialLoad: false,",
+				"     skipInitialLoad: true,",
 				"     waterMarkColumn: 'data_date',",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> SqlTablePerson",
-				"SqlTablePerson sink(allowSchemaDrift: true,",
+				"     format: 'table') ~> sourcesqlPersontable",
+				"sourcesqlPersontable filter(data_date > toDate('2022-05-05')) ~> filterbasedondatadate",
+				"filterbasedondatadate sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     filePattern:'incremental1.csv',",
+				"     input(",
+				"          PersonID as string,",
+				"          FirstName as string,",
+				"          MiddleName as string,",
+				"          LastName as string,",
+				"          data_date as string",
+				"     ),",
+				"     filePattern:(aman1.csv),",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     partitionBy('hash', 1)) ~> sinkrawcontainer"
 			]
 		}
 	}

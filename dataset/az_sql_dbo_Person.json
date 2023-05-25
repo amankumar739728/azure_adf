@@ -1,5 +1,5 @@
 {
-	"name": "AzureSqlTable2",
+	"name": "az_sql_dbo_Person",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureSqlDatabase1",

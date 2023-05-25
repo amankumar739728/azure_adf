@@ -1,5 +1,5 @@
 {
-	"name": "AzureSqlTable1",
+	"name": "az_sql_dbo_resign_employee",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureSqlDatabase1",

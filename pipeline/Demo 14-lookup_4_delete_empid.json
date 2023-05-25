@@ -21,7 +21,7 @@
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "az_sql_dbo_resign_employee",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
