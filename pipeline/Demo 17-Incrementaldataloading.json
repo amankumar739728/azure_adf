@@ -119,7 +119,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"FileName": {
-								"value": "watermark.csv",
+								"value": "@concat('File=',pipeline().RunId,'-[n].csv')",
 								"type": "Expression"
 							}
 						}
@@ -174,6 +174,9 @@
 			"watermark": {
 				"type": "String"
 			}
+		},
+		"folder": {
+			"name": "Demo Pipeline"
 		},
 		"annotations": []
 	}
