@@ -301,7 +301,7 @@
 							}
 						},
 						"linkedServiceName": {
-							"referenceName": "AzureDatabricks2",
+							"referenceName": "AzureDatabricks1",
 							"type": "LinkedServiceReference"
 						}
 					}
@@ -321,7 +321,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks2')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureDatabricks1')]"
 			]
 		},
 		{
